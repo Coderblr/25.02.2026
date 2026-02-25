@@ -1,0 +1,238 @@
+'use client';
+
+export default function HomeView({ user }) {
+    return (
+        <div style={styles.container}>
+
+            {/* ===== PAGE TITLE ===== */}
+            <div style={styles.titleRow}>
+                <img
+                    src="/dashboard/Dashboard.svg"
+                    alt="Dashboard"
+                    style={styles.titleImg}
+                />
+            </div>
+            <div style={styles.subtitleRow}>
+                <img
+                    src="/dashboard/Welcome Back, Pankaj here's your overview.svg"
+                    alt={`Welcome Back, ${user?.first_name || 'User'}! Here's your overview`}
+                    style={styles.subtitleImg}
+                />
+            </div>
+
+            {/* ===== STATS CARDS ===== */}
+            <div style={styles.statsGrid}>
+
+                {/* CIF Records */}
+                <div style={styles.statCard}>
+                    <div style={styles.statIconWrap}>
+                        <img src="/dashboard/id-card.svg" alt="CIF" style={styles.statIcon} />
+                    </div>
+                    <div style={styles.statNumber}>0</div>
+                    <div style={styles.statLabel}>
+                        <img
+                            src="/dashboard/CIF Records.svg"
+                            alt="CIF Records"
+                            style={styles.statLabelImg}
+                        />
+                    </div>
+                </div>
+
+                {/* CCOD Accounts */}
+                <div style={styles.statCard}>
+                    <div style={styles.statIconWrap}>
+                        <img src="/dashboard/g2481.svg" alt="CCOD" style={styles.statIcon} />
+                    </div>
+                    <div style={styles.statNumber}>0</div>
+                    <div style={styles.statLabel}>
+                        <img
+                            src="/dashboard/CCOD Accounts.svg"
+                            alt="CCOD Accounts"
+                            style={styles.statLabelImg}
+                        />
+                    </div>
+                </div>
+
+                {/* Deposits */}
+                <div style={styles.statCard}>
+                    <div style={styles.statIconWrap}>
+                        <img src="/dashboard/invesment.svg" alt="Deposits" style={styles.statIcon} />
+                    </div>
+                    <div style={styles.statNumber}>0</div>
+                    <div style={styles.statLabel}>
+                        <img
+                            src="/dashboard/Deposits.svg"
+                            alt="Deposits"
+                            style={styles.statLabelImg}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* ===== PROFILE INFORMATION ===== */}
+            <div style={styles.profileSection}>
+                <div style={styles.profileTitleRow}>
+                    <img
+                        src="/dashboard/Profile Information.svg"
+                        alt="Profile Information"
+                        style={styles.profileTitleImg}
+                    />
+                </div>
+
+                <div style={styles.profileTable}>
+                    <div style={styles.profileRow}>
+                        <div style={styles.profileCell}>
+                            <div style={styles.profileCellLabel}>User name</div>
+                            <div style={styles.profileCellValue}>{user?.username || "—"}</div>
+                        </div>
+                        <div style={styles.profileCell}>
+                            <div style={styles.profileCellLabel}>First Name</div>
+                            <div style={styles.profileCellValue}>{user?.first_name || "—"}</div>
+                        </div>
+                        <div style={styles.profileCell}>
+                            <div style={styles.profileCellLabel}>Last Name</div>
+                            <div style={styles.profileCellValue}>{user?.last_name || "—"}</div>
+                        </div>
+                        <div style={styles.profileCell}>
+                            <div style={styles.profileCellLabel}>Department Code</div>
+                            <div style={styles.profileCellValue}>{user?.department_code || "—"}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* ===================================
+   STYLES
+=================================== */
+const styles = {
+    container: {
+        padding: "0",
+        fontFamily: "'Inter', 'Segoe UI', sans-serif",
+    },
+
+    titleRow: {
+        marginBottom: "4px",
+    },
+
+    titleImg: {
+        height: "28px",
+        objectFit: "contain",
+        objectPosition: "left",
+        display: "block",
+    },
+
+    subtitleRow: {
+        marginBottom: "24px",
+    },
+
+    subtitleImg: {
+        height: "18px",
+        objectFit: "contain",
+        objectPosition: "left",
+        display: "block",
+        opacity: 0.75,
+    },
+
+    /* STATS */
+    statsGrid: {
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "20px",
+        marginBottom: "28px",
+    },
+
+    statCard: {
+        backgroundColor: "white",
+        borderRadius: "10px",
+        padding: "28px 20px 20px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "8px",
+        boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+        border: "1px solid #eaf0f8",
+    },
+
+    statIconWrap: {
+        width: "52px",
+        height: "52px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    statIcon: {
+        width: "42px",
+        height: "42px",
+        objectFit: "contain",
+    },
+
+    statNumber: {
+        fontSize: "36px",
+        fontWeight: "700",
+        color: "#1e293b",
+        lineHeight: 1,
+    },
+
+    statLabel: {
+        display: "flex",
+        justifyContent: "center",
+    },
+
+    statLabelImg: {
+        height: "16px",
+        objectFit: "contain",
+    },
+
+    /* PROFILE */
+    profileSection: {
+        backgroundColor: "white",
+        borderRadius: "10px",
+        padding: "20px 24px",
+        boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+        border: "1px solid #eaf0f8",
+    },
+
+    profileTitleRow: {
+        marginBottom: "16px",
+    },
+
+    profileTitleImg: {
+        height: "20px",
+        objectFit: "contain",
+        objectPosition: "left",
+        display: "block",
+    },
+
+    profileTable: {
+        borderTop: "1px solid #e8f0f8",
+        paddingTop: "16px",
+    },
+
+    profileRow: {
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "16px",
+    },
+
+    profileCell: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "4px",
+    },
+
+    profileCellLabel: {
+        fontSize: "12px",
+        color: "#64748b",
+        fontWeight: "500",
+    },
+
+    profileCellValue: {
+        fontSize: "14px",
+        color: "#1565c0",
+        fontWeight: "600",
+    },
+};
