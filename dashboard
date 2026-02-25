@@ -1,0 +1,278 @@
+'use client';
+
+import { useState, useEffect } from "react";
+import { styles } from "../../styles/AppStyles";
+import Sidebar from "./Sidebar";
+import HomeView from "./HomeView";
+import CifCreationView from "./CifCreationView";
+import DepositAccountView from "./DepositAccountView";
+import LoanAccountView from "./LoanAccountView";
+import CcodAccountView from "./CcodAccountView";
+import CkycView from "./CkycView";
+import SocialAttributeView from "./SocialAttributeView";
+import AmendView from "./AmendView";
+import PanCifView from "./PanCifView";
+import FundTransferView from "./FundTransferView";
+import PpfView from "./PpfView";
+import RdView from "./RdView";
+import FoView from "./FoView";
+import ExcelBatchView from "./ExcelBatchView";
+import ModView from "./ModView";
+import KccView from "./KccView";
+import NocView from "./NocView";
+import ErrorResolutionCentreView from "./ErrorResolutionCentreView";
+import TellerResetView from "./TellerResetView";
+import TellerSignonView from "./TellerSignonView";
+import TellerCreationView from "./TellerCreationView";
+import Account_to_AccountTransferView from "./Account_to_AccountTransferView";
+import AdminDashboard from "../admin/AdminDashboard";
+import UserManagement from "../admin/UserManagement";
+import ActivityLogs from "../admin/ActivityLogs";
+import UserDetail from "../admin/UserDetail";
+
+export default function Dashboard({ user, onLogout }) {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [activeService, setActiveService] = useState("home");
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    useEffect(() => {
+        if (user?.user_type === 1) {
+            setActiveService("admin_dashboard");
+        }
+    }, []);
+
+    const renderContent = () => {
+        switch (activeService) {
+            case "home":
+                return <HomeView user={user} />;
+            case "cif":
+                return <CifCreationView />;
+            case "deposit":
+                return <DepositAccountView />;
+            case "loan":
+                return <LoanAccountView />;
+            case "ccod":
+                return <CcodAccountView />;
+            case "ckyc":
+                return <CkycView />;
+            case "social":
+                return <SocialAttributeView />;
+            case "amend":
+                return <AmendView />;
+            case "pancif":
+                return <PanCifView />;
+            case "fundtransfer":
+                return <FundTransferView />;
+            case "ppf":
+                return <PpfView />;
+            case "rd":
+                return <RdView />;
+            case "kcc":
+                return <KccView />;
+            case "mod":
+                return <ModView />;
+            case "noc":
+                return <NocView />;
+            case "fo":
+                return <FoView />;
+            case "tellerreset":
+                return <TellerResetView />;
+            case "tellersignon":
+                return <TellerSignonView />;
+            case "tellercreation":
+                return <TellerCreationView />;
+            case "excel":
+                return <ExcelBatchView />;
+            case "acc_to_acc":
+                return <Account_to_AccountTransferView />;
+            case "error":
+                return <ErrorResolutionCentreView />;
+            case "admin_dashboard":
+                return user?.user_type === 1 ? (
+                    <AdminDashboard />
+                ) : (
+                    <div style={styles.accessDenied}>Access denied</div>
+                );
+            case "user_management":
+                return user?.user_type === 1 ? (
+                    <UserManagement
+                        onViewUser={(u) => {
+                            setSelectedUser(u);
+                            setActiveService("user_detail");
+                        }}
+                        onViewLogs={(u) => {
+                            setSelectedUser(u);
+                            setActiveService("activity_logs");
+                        }}
+                    />
+                ) : (
+                    <div style={styles.accessDenied}>Access denied</div>
+                );
+            case "activity_logs":
+                return user?.user_type === 1 ? (
+                    <ActivityLogs
+                        user={selectedUser}
+                        onBack={() => setActiveService("user_management")}
+                    />
+                ) : (
+                    <div style={styles.accessDenied}>Access denied</div>
+                );
+            case "user_detail":
+                return user?.user_type === 1 ? (
+                    <>
+                        <UserDetail
+                            user={selectedUser}
+                            onBack={() => setActiveService("user_management")}
+                        />
+                    </>
+                ) : (
+                    <div style={styles.accessDenied}>Access denied</div>
+                );
+            default:
+                return <HomeView user={user} />;
+        }
+    };
+
+    return (
+        <div style={dashStyles.container}>
+
+            {/* ===== TOP BANNER ===== */}
+            <div style={dashStyles.topBanner}>
+                Developed &amp; Maintained By IT - QACoE
+            </div>
+
+            {/* ===== HEADER NAV ===== */}
+            <nav style={dashStyles.nav}>
+                <div style={dashStyles.navLeft}>
+                    {/* Hamburger / menu icon */}
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        style={dashStyles.menuBtn}
+                        title="Toggle sidebar"
+                    >
+                        <img
+                            src="/dashboard/menu (1).svg"
+                            alt="Menu"
+                            style={{ width: "22px", height: "22px" }}
+                        />
+                    </button>
+
+                    {/* SBI Logo */}
+                    <img
+                        src="/dashboard/SBI logo Blue.svg"
+                        alt="SBI"
+                        style={dashStyles.navLogo}
+                    />
+                </div>
+
+                {/* Logout — yellow pill button matching reference */}
+                <button onClick={onLogout} style={dashStyles.logoutBtn}>
+                    Logout
+                </button>
+            </nav>
+
+            {/* ===== MAIN LAYOUT ===== */}
+            <div style={dashStyles.main}>
+
+                {/* SIDEBAR */}
+                {sidebarOpen && (
+                    <Sidebar
+                        sidebarOpen={sidebarOpen}
+                        activeService={activeService}
+                        setActiveService={setActiveService}
+                        user={user}
+                    />
+                )}
+
+                {/* CONTENT */}
+                <main style={dashStyles.content}>
+                    {renderContent()}
+                </main>
+            </div>
+        </div>
+    );
+}
+
+/* ===================================
+   DASHBOARD STYLES
+=================================== */
+const dashStyles = {
+    container: {
+        minHeight: "100vh",
+        backgroundColor: "#f4f7fb",
+        display: "flex",
+        flexDirection: "column",
+        fontFamily: "'Inter', 'Segoe UI', sans-serif",
+    },
+
+    topBanner: {
+        backgroundColor: "#1565c0",
+        color: "white",
+        fontSize: "12px",
+        textAlign: "center",
+        padding: "4px 0",
+        fontWeight: "500",
+        letterSpacing: "0.3px",
+    },
+
+    nav: {
+        backgroundColor: "white",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "10px 24px",
+        borderBottom: "1px solid #e0e8f0",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+    },
+
+    navLeft: {
+        display: "flex",
+        alignItems: "center",
+        gap: "16px",
+    },
+
+    menuBtn: {
+        background: "transparent",
+        border: "none",
+        cursor: "pointer",
+        padding: "4px",
+        display: "flex",
+        alignItems: "center",
+    },
+
+    navLogo: {
+        height: "42px",
+        objectFit: "contain",
+    },
+
+    logoutBtn: {
+        padding: "9px 28px",
+        backgroundColor: "#ffd60a",
+        color: "#0a1e3a",
+        border: "none",
+        borderRadius: "30px",
+        fontSize: "14px",
+        fontWeight: "700",
+        cursor: "pointer",
+        fontFamily: "'Inter', 'Segoe UI', sans-serif",
+        letterSpacing: "0.3px",
+        transition: "opacity 0.2s",
+    },
+
+    logoutIcon: {
+        height: "34px",
+        objectFit: "contain",
+    },
+
+    main: {
+        display: "flex",
+        flex: 1,
+        minHeight: 0,
+    },
+
+    content: {
+        flex: 1,
+        padding: "28px 32px",
+        overflowY: "auto",
+    },
+};
