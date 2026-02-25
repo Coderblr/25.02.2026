@@ -1,0 +1,385 @@
+'use client';
+
+import { useState } from "react";
+import { mockFetch, createMockFetch } from "../../utils/mockData";
+
+export default function LoginPage({ onLoginSuccess, onNavigate }) {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const [userFocused, setUserFocused] = useState(false);
+    const [passFocused, setPassFocused] = useState(false);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+
+        try {
+            const response = await createMockFetch(() => mockFetch.login(username));
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.detail || "Login failed");
+            }
+
+            const data = await response.json();
+            const authToken = data.access_token;
+            const userType = data.user_type ?? 0;
+
+            localStorage.setItem("userToken", authToken);
+            localStorage.setItem("userType", String(userType));
+            onLoginSuccess(authToken, userType);
+
+            setUsername("");
+            setPassword("");
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div style={styles.container}>
+
+            {/* ===== LEFT PANEL ===== */}
+            <div style={styles.leftPanel}>
+                <div style={styles.leftContent}>
+                    {/* Welcome Back heading */}
+                    <img
+                        src="/signin/Welcome Back.svg"
+                        alt="Welcome Back"
+                        style={styles.welcomeImg}
+                    />
+
+                    {/* Subtitle */}
+                    <img
+                        src="/signin/Sign in to access your test data creation platform.svg"
+                        alt="Sign in to access your test data creation platform"
+                        style={styles.subtitleImg}
+                    />
+
+                    {/* Feature links */}
+                    <div style={styles.featureLinks}>
+                        <span style={styles.featureLink}>Automated CIF Generation</span>
+                        <span style={styles.featureLink}>CCOD Account Creation</span>
+                        <span style={styles.featureLink}>Deposit Management</span>
+                    </div>
+
+                    {/* Back to Home */}
+                    <button style={styles.backBtn} onClick={() => onNavigate("welcome")}>
+                        Back to Home
+                    </button>
+                </div>
+            </div>
+
+            {/* ===== RIGHT PANEL ===== */}
+            <div style={styles.rightPanel}>
+
+                {/* Background image (business man) */}
+                <img
+                    src="/signin/Mask Group 220.png"
+                    alt=""
+                    style={styles.rightBg}
+                />
+
+                {/* Floating login card */}
+                <div style={styles.formCard}>
+
+                    {/* SBI Logo */}
+                    <div style={styles.logoRow}>
+                        <img
+                            src="/signin/SBI logo Blue.svg"
+                            alt="SBI"
+                            style={styles.sbiLogo}
+                        />
+                    </div>
+
+                    {/* Sign In heading */}
+                    <img
+                        src="/signin/Sign In.svg"
+                        alt="Sign In"
+                        style={styles.signInImg}
+                    />
+
+                    {/* "Enter your credentials..." */}
+                    <img
+                        src="/signin/Enter your credentials to continue.svg"
+                        alt="Enter your credentials to continue"
+                        style={styles.credentialsImg}
+                    />
+
+                    {/* Username field */}
+                    <div style={styles.fieldGroup}>
+                        <img
+                            src="/signin/Username.svg"
+                            alt="Username"
+                            style={styles.fieldLabelImg}
+                        />
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            onFocus={() => setUserFocused(true)}
+                            onBlur={() => setUserFocused(false)}
+                            style={{
+                                ...styles.input,
+                                borderColor: userFocused ? "#003478" : "#b8cfe8",
+                                boxShadow: userFocused
+                                    ? "0 0 0 3px rgba(0,52,120,0.12)"
+                                    : "none",
+                            }}
+                            placeholder=""
+                            required
+                        />
+                    </div>
+
+                    {/* Password field */}
+                    <div style={styles.fieldGroup}>
+                        <img
+                            src="/signin/Password.svg"
+                            alt="Password"
+                            style={styles.fieldLabelImg}
+                        />
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            onFocus={() => setPassFocused(true)}
+                            onBlur={() => setPassFocused(false)}
+                            style={{
+                                ...styles.input,
+                                borderColor: passFocused ? "#003478" : "#b8cfe8",
+                                boxShadow: passFocused
+                                    ? "0 0 0 3px rgba(0,52,120,0.12)"
+                                    : "none",
+                            }}
+                            placeholder=""
+                            required
+                        />
+                    </div>
+
+                    {/* Error */}
+                    {error && <div style={styles.errorMsg}>{error}</div>}
+
+                    {/* Login button */}
+                    <button
+                        onClick={handleLogin}
+                        style={{
+                            ...styles.loginBtn,
+                            opacity: loading ? 0.8 : 1,
+                        }}
+                        disabled={loading}
+                    >
+                        {loading ? "Signing in..." : "Login"}
+                    </button>
+
+                    {/* Register link */}
+                    <div style={styles.registerRow}>
+                        <img
+                            src="/signin/Don't have an account Click Here to Create Account.svg"
+                            alt="Don't have an account? Click Here to Create Account"
+                            style={styles.registerImg}
+                            onClick={() => onNavigate("register")}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* ===================================
+   STYLES
+=================================== */
+const styles = {
+    container: {
+        display: "flex",
+        minHeight: "100vh",
+        width: "100vw",
+        fontFamily: "'Inter', 'Segoe UI', sans-serif",
+        overflow: "hidden",
+    },
+
+    /* LEFT */
+    leftPanel: {
+        width: "310px",
+        flexShrink: 0,
+        backgroundColor: "#f0f5fb",
+        display: "flex",
+        alignItems: "center",
+        padding: "48px 40px",
+        boxSizing: "border-box",
+    },
+
+    leftContent: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+    },
+
+    welcomeImg: {
+        width: "220px",
+        objectFit: "contain",
+        marginBottom: "4px",
+    },
+
+    subtitleImg: {
+        width: "220px",
+        objectFit: "contain",
+        marginBottom: "8px",
+    },
+
+    featureLinks: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "6px",
+        marginBottom: "20px",
+    },
+
+    featureLink: {
+        color: "#1a73c8",
+        fontSize: "14px",
+        fontWeight: "500",
+        cursor: "pointer",
+        textDecoration: "none",
+    },
+
+    backBtn: {
+        padding: "9px 24px",
+        border: "1.5px solid #aac4e0",
+        borderRadius: "20px",
+        background: "white",
+        color: "#333",
+        fontSize: "13px",
+        fontWeight: "500",
+        cursor: "pointer",
+        fontFamily: "inherit",
+        width: "fit-content",
+    },
+
+    /* RIGHT */
+    rightPanel: {
+        flex: 1,
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        overflow: "hidden",
+    },
+
+    rightBg: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        zIndex: 0,
+    },
+
+    /* FORM CARD */
+    formCard: {
+        position: "relative",
+        zIndex: 2,
+        backgroundColor: "white",
+        borderRadius: "16px",
+        padding: "36px 40px",
+        width: "360px",
+        marginRight: "60px",
+        boxShadow: "0 8px 40px rgba(0,0,0,0.18)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "0px",
+    },
+
+    logoRow: {
+        marginBottom: "8px",
+    },
+
+    sbiLogo: {
+        height: "52px",
+        objectFit: "contain",
+    },
+
+    signInImg: {
+        width: "120px",
+        objectFit: "contain",
+        marginBottom: "4px",
+    },
+
+    credentialsImg: {
+        width: "230px",
+        objectFit: "contain",
+        marginBottom: "20px",
+    },
+
+    fieldGroup: {
+        width: "100%",
+        marginBottom: "14px",
+    },
+
+    fieldLabelImg: {
+        height: "16px",
+        objectFit: "contain",
+        objectPosition: "left",
+        marginBottom: "6px",
+        display: "block",
+    },
+
+    input: {
+        width: "100%",
+        padding: "10px 14px",
+        border: "1.5px solid #b8cfe8",
+        borderRadius: "6px",
+        fontSize: "14px",
+        boxSizing: "border-box",
+        fontFamily: "inherit",
+        outline: "none",
+        transition: "border-color 0.2s, box-shadow 0.2s",
+        color: "#1e293b",
+        backgroundColor: "white",
+    },
+
+    errorMsg: {
+        width: "100%",
+        backgroundColor: "#fee2e2",
+        color: "#991b1b",
+        padding: "10px 14px",
+        borderRadius: "6px",
+        marginBottom: "10px",
+        fontSize: "13px",
+        boxSizing: "border-box",
+    },
+
+    loginBtn: {
+        width: "100%",
+        padding: "12px",
+        backgroundColor: "#ffd60a",
+        color: "#0a1e3a",
+        border: "none",
+        borderRadius: "8px",
+        fontSize: "15px",
+        fontWeight: "700",
+        cursor: "pointer",
+        fontFamily: "inherit",
+        marginTop: "6px",
+        marginBottom: "14px",
+        transition: "opacity 0.2s",
+    },
+
+    registerRow: {
+        display: "flex",
+        justifyContent: "center",
+    },
+
+    registerImg: {
+        maxWidth: "270px",
+        objectFit: "contain",
+        cursor: "pointer",
+    },
+};
