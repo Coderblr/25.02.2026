@@ -1,0 +1,315 @@
+'use client';
+
+import React, { useEffect, useState } from "react";
+
+export default function WelcomePage({ onNavigate }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    document.body.style.overflow = "hidden";
+
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  return (
+    <div style={s.container}>
+
+      {/* ===== BACKGROUND: pure dark base ===== */}
+      <div style={{ ...s.bgLayer, backgroundColor: "#041c33", zIndex: 1 }} />
+
+      {/* ===== BACKGROUND: Hero laptop image — full viewport ===== */}
+      <div style={{ ...s.bgLayer, zIndex: 2 }}>
+        <img
+          src="/homeview/Mask Group 89.png"
+          alt=""
+          style={s.heroBgImg}
+        />
+      </div>
+
+      {/* ===== BACKGROUND: Left dark overlay so text is readable ===== */}
+      <div style={{ ...s.bgLayer, zIndex: 3, background: "linear-gradient(to right, rgba(4,28,51,0.96) 0%, rgba(4,28,51,0.88) 30%, rgba(4,28,51,0.45) 55%, rgba(4,28,51,0.05) 75%, transparent 100%)" }} />
+
+      {/* ===== CONTENT ===== */}
+      <div style={{ ...s.bgLayer, zIndex: 10, display: "flex", flexDirection: "column" }}>
+
+        {/* ---- NAVBAR ---- */}
+        <nav style={s.navbar}>
+          <img src="/homeview/SBI logo Blue.svg" alt="SBI" style={s.logo} />
+          <div style={s.navRight}>
+            <button style={s.signInBtn} onClick={() => onNavigate("login")}>Sign In</button>
+            <button style={s.getStartedBtn} onClick={() => onNavigate("register")}>Get Started</button>
+          </div>
+        </nav>
+
+        {/* ---- HERO TEXT (left side) ---- */}
+        <div style={s.heroArea}>
+          <div style={s.heroLeft}>
+
+            {/* Tag */}
+            <div style={s.tag}>Automated Test Data Platform</div>
+
+            {/* Headline */}
+            <h1 style={s.headline}>
+              Advanced <span style={s.cyan}>Banking</span><br />
+              Test <span style={s.cyan}>Data</span> Creation
+            </h1>
+
+            {/* Subtext */}
+            <p style={s.subtext}>
+              Streamline your testing workflow with automated<br />
+              CIF, CCOD and deposit account generation
+            </p>
+
+            {/* CTA buttons */}
+            <div style={s.btnRow}>
+              <button style={s.primaryBtn} onClick={() => onNavigate("login")}>Get Started</button>
+              <button style={s.secondaryBtn} onClick={() => onNavigate("register")}>Learn More</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ---- FEATURE CARDS (bottom-right floating) ---- */}
+        <div style={s.featureCardRow}>
+
+          {/* Card 1 */}
+          <div style={s.featureCard}>
+            <img src="/homeview/Group 36292.svg" alt="Secure" style={s.featureIcon} />
+            <div>
+              <div style={s.featureTitle}>Secure and Reliable</div>
+              <div style={s.featureDesc}>Enterprise grade security for your test data</div>
+            </div>
+          </div>
+
+          <div style={s.cardDivider} />
+
+          {/* Card 2 */}
+          <div style={s.featureCard}>
+            <img src="/homeview/Group 36293.svg" alt="Performance" style={s.featureIcon} />
+            <div>
+              <div style={s.featureTitle}>High Performance</div>
+              <div style={s.featureDesc}>Generate test data at scale efficiency</div>
+            </div>
+          </div>
+
+          <div style={s.cardDivider} />
+
+          {/* Card 3 */}
+          <div style={s.featureCard}>
+            <img src="/homeview/Group 36294.svg" alt="Records" style={s.featureIcon} />
+            <div>
+              <div style={s.featureTitle}>Complete Records</div>
+              <div style={s.featureDesc}>Full CIF and account data creation</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================
+   STYLES — matching reference image exactly
+========================================== */
+const s = {
+
+  container: {
+    position: "relative",
+    width: "100vw",
+    height: "100vh",
+    overflow: "hidden",
+    backgroundColor: "#041c33",
+    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+  },
+
+  bgLayer: {
+    position: "absolute",
+    top: 0, left: 0,
+    width: "100%", height: "100%",
+  },
+
+  /* Hero image covers the FULL viewport */
+  heroBgImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    objectPosition: "center center",
+    display: "block",
+  },
+
+  /* NAVBAR */
+  navbar: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "20px 44px",
+    flexShrink: 0,
+  },
+
+  logo: {
+    height: "46px",
+    objectFit: "contain",
+  },
+
+  navRight: {
+    display: "flex",
+    gap: "14px",
+    alignItems: "center",
+  },
+
+  signInBtn: {
+    padding: "8px 26px",
+    borderRadius: "30px",
+    border: "1.5px solid rgba(255,255,255,0.6)",
+    background: "transparent",
+    color: "white",
+    fontSize: "13.5px",
+    fontWeight: "500",
+    cursor: "pointer",
+    fontFamily: "inherit",
+  },
+
+  getStartedBtn: {
+    padding: "8px 26px",
+    borderRadius: "30px",
+    border: "none",
+    background: "#ffd60a",
+    color: "#0a1e3a",
+    fontSize: "13.5px",
+    fontWeight: "700",
+    cursor: "pointer",
+    fontFamily: "inherit",
+  },
+
+  /* HERO AREA — fills remaining vertical space */
+  heroArea: {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    padding: "0 60px 80px 60px",
+  },
+
+  heroLeft: {
+    maxWidth: "480px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "0",
+  },
+
+  tag: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: "13px",
+    letterSpacing: "0.5px",
+    marginBottom: "16px",
+  },
+
+  headline: {
+    color: "white",
+    fontSize: "46px",
+    fontWeight: "700",
+    lineHeight: "1.2",
+    margin: "0 0 18px 0",
+  },
+
+  cyan: {
+    color: "#00cfff",
+  },
+
+  subtext: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: "14px",
+    lineHeight: "1.65",
+    margin: "0 0 30px 0",
+  },
+
+  btnRow: {
+    display: "flex",
+    gap: "16px",
+    flexWrap: "wrap",
+  },
+
+  primaryBtn: {
+    padding: "11px 28px",
+    borderRadius: "30px",
+    border: "none",
+    background: "#ffd60a",
+    color: "#0a1e3a",
+    fontSize: "14px",
+    fontWeight: "700",
+    cursor: "pointer",
+    fontFamily: "inherit",
+  },
+
+  secondaryBtn: {
+    padding: "11px 28px",
+    borderRadius: "30px",
+    border: "1.5px solid rgba(255,255,255,0.6)",
+    background: "transparent",
+    color: "white",
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    fontFamily: "inherit",
+  },
+
+  /* ---- FEATURE CARDS — single glassmorphism row, bottom-right ---- */
+  featureCardRow: {
+    position: "absolute",
+    bottom: "32px",
+    right: "40px",
+    display: "flex",
+    alignItems: "center",
+    gap: "0",
+    background: "rgba(30, 40, 60, 0.62)",
+    backdropFilter: "blur(14px)",
+    WebkitBackdropFilter: "blur(14px)",
+    borderRadius: "12px",
+    border: "1px solid rgba(255,255,255,0.12)",
+    padding: "14px 24px",
+    zIndex: 20,
+  },
+
+  featureCard: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    padding: "0 20px",
+  },
+
+  cardDivider: {
+    width: "1px",
+    height: "38px",
+    background: "rgba(255,255,255,0.2)",
+    flexShrink: 0,
+  },
+
+  featureIcon: {
+    width: "36px",
+    height: "36px",
+    objectFit: "contain",
+    flexShrink: 0,
+  },
+
+  featureTitle: {
+    color: "white",
+    fontSize: "13px",
+    fontWeight: "600",
+    marginBottom: "3px",
+  },
+
+  featureDesc: {
+    color: "rgba(255,255,255,0.65)",
+    fontSize: "11px",
+    maxWidth: "130px",
+    lineHeight: "1.4",
+  },
+};
