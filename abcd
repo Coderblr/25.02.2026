@@ -1,0 +1,96 @@
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
+from openai import AzureOpenAI
+import shutil
+import os
+
+app = FastAPI()
+
+# Allow Next.js frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Azure OpenAI setup
+client = AzureOpenAI(
+    api_key="YOUR_AZURE_OPENAI_KEY",
+    api_version="2024-02-15-preview",
+    azure_endpoint="YOUR_AZURE_ENDPOINT"
+)
+
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+@app.post("/generate-script")
+async def generate_script(file: UploadFile = File(...)):
+
+    file_path = f"{UPLOAD_FOLDER}/{file.filename}"
+
+    # Save uploaded file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Read Excel
+    df = pd.read_excel(file_path)
+
+    # Convert rows to JSON format
+    testcases = df.to_dict(orient="records")
+
+    prompt = f"""
+You are a QA Automation Engineer.
+
+Convert the following structured test cases into Selenium Java automation code.
+
+Columns:
+TestCaseID
+TestCaseName
+StepNo
+Action
+LocatorType
+LocatorValue
+TestData
+ExpectedResult
+
+Test Cases:
+{testcases}
+
+Requirements:
+1. Use Selenium WebDriver
+2. Use ChromeDriver
+3. Generate complete Java class
+4. Execute steps sequentially
+5. Print result after each step
+
+Example output format:
+
+STEP_1:PASS
+STEP_2:FAIL
+
+Return ONLY Java code.
+"""
+
+    response = client.chat.completions.create(
+        model="gpt4",  # Your Azure deployment name
+        messages=[
+            {"role": "system", "content": "You generate Selenium automation scripts."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0
+    )
+
+    script = response.choices[0].message.content
+
+    # Save script locally
+    with open("generated_script.java", "w") as f:
+        f.write(script)
+
+    return {
+        "message": "Script generated successfully",
+        "script": script
+    }
