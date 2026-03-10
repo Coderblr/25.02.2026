@@ -1,0 +1,78 @@
+"use client";
+
+import { useState } from "react";
+
+export default function Home() {
+
+  const [script, setScript] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const uploadFile = async (e) => {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setLoading(true);
+
+    try {
+
+      const res = await fetch("http://localhost:8000/generate-script", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      setScript(data.script);
+
+    } catch (error) {
+
+      console.error(error);
+      alert("Error generating script");
+
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ padding: "40px", fontFamily: "Arial" }}>
+
+      <h1>AI Selenium Test Script Generator</h1>
+
+      <p>Upload Excel test cases to generate Selenium Java automation scripts.</p>
+
+      <input
+        type="file"
+        accept=".xlsx,.xls"
+        onChange={uploadFile}
+      />
+
+      {loading && (
+        <p style={{ marginTop: "20px" }}>
+          Generating Selenium script...
+        </p>
+      )}
+
+      {script && (
+        <pre
+          style={{
+            background: "#f5f5f5",
+            padding: "20px",
+            marginTop: "20px",
+            borderRadius: "10px",
+            whiteSpace: "pre-wrap",
+            overflowX: "auto"
+          }}
+        >
+          {script}
+        </pre>
+      )}
+
+    </div>
+  );
+}
